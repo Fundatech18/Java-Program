@@ -1,152 +1,179 @@
 import java.util.Scanner;
 
-class Matrix {
-    private double[][] data;
-    private static int rows;
-    private static int cols;
+class Matrix{
+    private double [][]matrixValue;
+    private int rows,cols;
 
-    // Constructor to initialize matrix with specified dimensions
-    public Matrix(int rows, int cols) {
+    Matrix(){
+
+    }
+
+    Matrix(int rows,int cols,double [][]matrixvalue){
         this.rows = rows;
         this.cols = cols;
-        data = new double[rows][cols];
+        this.matrixValue = new double[rows][cols];
+        this.matrixValue = matrixvalue;
     }
 
-    public Matrix(Matrix m){
-        this.rows = m.rows;
-        this.cols = m.cols;
-        this.data = new double[this.rows][this.cols];
+    double [][]transpose(double [][]matrix){
+        return matrix;
     }
 
-    // Constructor to initialize matrix with given data
-    public Matrix(double[][] matrixData) {
-        this.rows = matrixData.length;
-        this.cols = matrixData[0].length;
-        this.data = matrixData;
+    public Matrix add(Matrix m1) throws Exception {
+        return addition(this,m1);
     }
 
-    public Matrix transpose() {
-        Matrix transposed = new Matrix(this.cols, this.rows);
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
-                transposed.data[j][i] = this.data[i][j];
+    public Matrix addition(Matrix m1,Matrix m2) throws Exception {
+        Matrix m3;
+        int row1 = m1.rows;
+        int col1 = m1.cols;
+        int row2 = m2.rows;
+        int col2 = m2.cols;
+
+
+        if((row1 == row2) && (col1 == col2)){
+            double [][]matrix = new double[row1][col1];
+
+            for(int i=0;i<row1;i++){
+                for(int j=0;j<col1;j++){
+
+                    matrix[i][j] = (m1.matrixValue[i][j] + m2.matrixValue[i][j]);
+                }
             }
+            m3 = new Matrix(row1,col1,matrix);
+
+        }else{
+            throw new Exception("Matrix size must be same at the time of addition");
         }
-        return transposed;
+
+        return m3;
     }
 
-    void display() {
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < data[0].length; j++) {
-                System.out.print(data[i][j] + " ");
+    public Matrix sub(Matrix m1) throws Exception{
+        return subtraction(this,m1);
+    }
+
+    public Matrix subtraction(Matrix m1,Matrix m2) throws Exception{
+        Matrix m3;
+        int row1 = m1.rows;
+        int col1 = m1.cols;
+        int row2 = m2.rows;
+        int col2 = m2.cols;
+
+
+        if((row1 == row2) && (col1 == col2)){
+            double [][]matrix = new double[row1][col1];
+
+            for(int i=0;i<row1;i++){
+                for(int j=0;j<col1;j++){
+
+                    matrix[i][j] = (m1.matrixValue[i][j] - m2.matrixValue[i][j]);
+                }
+            }
+            m3 = new Matrix(row1,col1,matrix);
+
+        }else{
+            throw new Exception("Matrix size must be same at the time of subtraction");
+        }
+
+        return m3;
+    }
+
+    public Matrix mul(Matrix m1) throws Exception{
+        return multiplication(this,m1);
+    }
+
+    public Matrix multiplication(Matrix m1,Matrix m2) throws Exception{
+        Matrix m3;
+        int row1 = m1.rows;
+        int col1 = m1.cols;
+        int row2 = m2.rows;
+        int col2 = m2.cols;
+
+        if(col1 == row2){
+            double [][]matrix = new double[row1][col2];
+            for(int i=0;i<row1;i++){
+                for(int j=0;j<col2;j++){
+                    for(int k=0;k<row2;k++){
+                        matrix[i][j] += (m1.matrixValue[i][k] * m2.matrixValue[k][j]);
+                    }
+                }
+            }
+            m3 = new Matrix(col2,row1,matrix);
+        }else{
+            throw new Exception("Number of Matrix 1 cols and Number of Matrix 2 rows must be same ");
+        }
+        return m3;
+    }
+
+    public void print(){
+        for(int i=0;i<this.rows;i++){
+            for(int j=0;j<this.cols;j++){
+                System.out.print(this.matrixValue[i][j]+"  ");
             }
             System.out.println();
         }
     }
 
 
-    Matrix add(Matrix m2){
-        Matrix x = new Matrix(m2);
-        for(int i=0;i<rows;i++){
-            for(int j=0;j<cols;j++){
-                x.data[i][j] = this.data[i][j] + m2.data[i][j];
-            }
-        }
-        return x;
-    }
-
-    static Matrix addition(Matrix m1,Matrix m2){
-        return m1.add(m2);
-    }
-    Matrix sub(Matrix m2){
-        Matrix x = new Matrix(m2);
-        for(int i=0;i<rows;i++){
-            for(int j=0;j<cols;j++){
-                x.data[i][j] = this.data[i][j] - m2.data[i][j];
-            }
-        }
-        return x;
-    }
-
-    static Matrix subtraction(Matrix m1,Matrix m2){
-        return m1.sub(m2);
-    }
-    Matrix mul(Matrix m2){
-        Matrix x = new Matrix(m2);
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < m2.cols; j++) {
-                x.data[i][j] = 0;
-                for (int k = 0; k < this.cols; k++) {
-                    x.data[i][j] += this.data[i][k] * m2.data[k][j];
-                }
-            }
-        }
-        return x;
-    }
-
-    static Matrix multiplication(Matrix m1,Matrix m2){
-        return m1.mul(m2);
-    }
-
 }
 
 public class Program08 {
+    static Matrix defineingObject(Scanner takeInput){
+
+        int rows,cols;
+        double [][]matrix;
+        System.out.println("Enter the Details of Matrix");
+
+        System.out.print("Enter the Row of Matrix :");
+        rows = takeInput.nextInt();
+        System.out.print("Enter the Col of Matrix : ");
+        cols = takeInput.nextInt();
+
+        matrix = new double[rows][cols];
+
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                System.out.printf("Enter the value of Matrix[%d][%d] : ",i,j);
+                matrix[i][j] = takeInput.nextDouble();
+            }
+        }
+
+        //Object initialization
+        return new Matrix(rows,cols,matrix);
+    }
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        Scanner takeInput = new Scanner(System.in);
 
-        System.out.print("Enter the number of rows for matrix m1: ");
-        int rows1 = sc.nextInt();
-        System.out.print("Enter the number of columns for matrix m1: ");
-        int cols1 = sc.nextInt();
+        System.out.println("Enter the detail of Matrix 1 : ");
+        Matrix m1 = defineingObject(takeInput);
+        System.out.println("Enter the detail of Matrix 2 : ");
+        Matrix m2 = defineingObject(takeInput);
+        Matrix addition,subtraction,multiplication;
+        addition = new Matrix();
+        subtraction = new Matrix();
+        multiplication = new Matrix();
 
-        double[][] matrixData = new double[rows1][cols1];
-        System.out.println("Enter the elements of matrix m1:");
-        for (int i = 0; i < rows1; i++) {
-            for (int j = 0; j < cols1; j++) {
-                matrixData[i][j] = sc.nextDouble();
-            }
+
+
+        try{
+            System.out.println("Addition of Matrix 1 and Matrix 2 : ");
+            addition = m2.add(m1);
+            addition.print();
+
+            System.out.println("subtraction of Matrix 1  and Matrix 2 : ");
+            subtraction = m2.sub(m1);
+            subtraction.print();
+
+            System.out.println("Multiplication of Matrix 1 and Matrix 2 : ");
+            multiplication = m2.mul(m1);
+            multiplication.print();
+
+        }catch (Exception e){
+            System.out.println("Error : "+ e.getMessage());
         }
-        Matrix m1 = new Matrix(matrixData);
 
-
-        Matrix tran = m1.transpose();
-        System.out.println("Transpose of m1:");
-        tran.display();
-
-        System.out.print("Enter the number of rows for matrix m2: ");
-        int rows2 = sc.nextInt();
-        System.out.print("Enter the number of columns for matrix m2: ");
-        int cols2 = sc.nextInt();
-        double[][] matrixData2 = new double[rows1][cols1];
-
-        System.out.println("Enter the elements of matrix m2:");
-        for (int i = 0; i < rows2; i++) {
-            for (int j = 0; j < cols2; j++) {
-                matrixData2[i][j] = sc.nextDouble();
-            }
-        }
-        Matrix m2 = new Matrix(matrixData2);
-
-        System.out.println("Matrix m1:");
-        m1.display();
-
-        System.out.println("Matrix m2:");
-        m2.display();
-
-        Matrix Result = Matrix.addition(m1, m2);
-        System.out.println("Addition of Matrix : ");
-        Result.display();
-
-        Matrix subtractionResult = Matrix.subtraction(m1, m2);
-        System.out.println("subtraction of Matrix : ");
-        subtractionResult.display();
-
-        Matrix multiplicatioResult = Matrix.multiplication(m1, m2);
-        System.out.println("Multiplication of Matrix : ");
-        multiplicatioResult.display();
 
 
     }
-
-
 }
